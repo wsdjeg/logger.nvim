@@ -151,4 +151,8 @@ function M.derive(name)
   return derive
 end
 
+M.setup = function(opt)
+  require('logger.config').setup(opt)
+end
+
 return M
