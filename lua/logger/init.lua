@@ -12,12 +12,7 @@ local logger = require('logger.base')
 local cmd = vim.cmd
 local call = vim.call
 local echo = vim.cmd.echo
-local fn = nil
-if vim.fn == nil then
-  fn = require('spacevim').fn
-else
-  fn = vim.fn
-end
+local fn = vim.fn
 
 logger.set_name('SpaceVim')
 logger.set_level(1)
