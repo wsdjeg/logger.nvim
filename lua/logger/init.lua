@@ -10,14 +10,9 @@ local M = {}
 
 local logger = require('logger.base')
 local cmd = vim.cmd
-local call = vim.call
-local echo = vim.cmd.echo
 local fn = vim.fn
 
-logger.set_name('SpaceVim')
-logger.set_level(1)
-logger.set_silent(1)
-logger.set_verbose(1)
+logger.set_name('logger')
 
 function M.info(msg)
   logger.info(msg)
@@ -33,14 +28,6 @@ end
 
 function M.debug(msg)
   logger.debug(msg)
-end
-
-function M.setLevel(level)
-  logger.set_level(level)
-end
-
-function M.setOutput(file)
-  logger.set_file(file)
 end
 
 function M.viewRuntimeLog()
@@ -61,42 +48,6 @@ function M.clearRuntimeLog()
   logger.clear()
 end
 
-function M.viewLog(...)
-  local argvs = { ... }
-  local info = '<details><summary> SpaceVim debug information </summary>\n\n'
-    .. '### SpaceVim options :\n\n'
-    .. '```toml\n'
-    .. fn.join(call('SpaceVim#options#list'), '\n')
-    .. '\n```\n'
-    .. '\n\n'
-    .. '### SpaceVim layers :\n\n'
-    .. call('SpaceVim#layers#report')
-    .. '\n\n'
-    .. '### SpaceVim Health checking :\n\n'
-    .. call('SpaceVim#health#report')
-    .. '\n\n'
-    .. '### SpaceVim runtime log :\n\n'
-    .. '```log\n'
-    .. logger.view(logger.level)
-    .. '\n```\n</details>\n\n'
-  if argvs ~= nil and #argvs >= 1 then
-    local bang = argvs[1]
-    if bang == 1 then
-      cmd('tabnew')
-      cmd('setl nobuflisted')
-      cmd('nnoremap <buffer><silent> q :tabclose!<CR>')
-      -- put info into buffer
-      fn.append(0, fn.split(info, '\n'))
-      cmd('setl nomodifiable')
-      cmd('setl buftype=nofile')
-      cmd('setl filetype=markdown')
-    else
-      echo(info)
-    end
-  else
-    return info
-  end
-end
 
 function M.syntax_extra()
   fn.matchadd('ErrorMsg', '.*[\\sError\\s\\].*')

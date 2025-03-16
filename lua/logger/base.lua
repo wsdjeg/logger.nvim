@@ -5,8 +5,6 @@
 -- License: GPLv3
 --=============================================================================
 
-local nt = require('logger.config').notify
-
 local rtplog = {}
 
 local M = {
@@ -89,9 +87,6 @@ end
 
 function M.error(msg)
   local log = M._build_msg(msg, 3)
-  if M.silent == 0 and M.verbose >= 1 then
-    nt.notify(msg, 'Error')
-  end
   M.write(log)
 end
 
@@ -107,13 +102,6 @@ function M.warn(msg, ...)
       end
     elseif type(issilent) ~= 'boolean' then
       issilent = false
-    end
-    if not issilent then
-      nt.notify(msg, 'WarningMsg')
-    else
-      if not M.silent and M.verbose >= 2 then
-        nt.notify(msg, 'WarningMsg')
-      end
     end
     M.write(log)
   end

@@ -1,10 +1,9 @@
 local M = {}
 
-M.notify = vim.notify
-
 function M.setup(opt)
-	opt = opt or {}
-	M.notify = opt.notify or M.notify
+  opt = opt or {}
+  local base = require('logger.base')
+  base.set_level(opt.level)
 end
 
 return M
