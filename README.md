@@ -12,6 +12,7 @@ require('logger').setup({
   -- 2 : log warn, error messages
   -- 3 : log error messages
   level = 0,
+  file = '~/.cache/nvim-log/log.txt',
 })
 ```
 

@@ -32,6 +32,12 @@ function M.set_silent(sl)
   end
 end
 
+function M.set_file(file)
+  if file then
+    M.file = file
+  end
+end
+
 function M.set_verbose(vb)
   -- verbose should be 1 - 4
   -- message type: log debug, info, warn, error
