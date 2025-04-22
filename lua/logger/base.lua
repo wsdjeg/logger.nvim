@@ -71,7 +71,7 @@ function M._build_msg(msg, l)
     time = c,
     msg = msg,
     level = l,
-    str = string.format('[ %s ] [%s] [ %s ] %s', c, M.levels[l], M.name, msg),
+    str = string.format('[ %s ] [ %s ] [ %s ] %s', c, M.levels[l], M.name, msg),
   }
 end
 
