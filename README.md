@@ -4,11 +4,11 @@
 
 <!-- vim-markdown-toc GFM -->
 
-* [Installation](#installation)
-* [Setup](#setup)
-* [Usage](#usage)
-* [Self-Promotion](#self-promotion)
-* [License](#license)
+- [Installation](#installation)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Self-Promotion](#self-promotion)
+- [License](#license)
 
 <!-- vim-markdown-toc -->
 
@@ -73,14 +73,19 @@ the output of `logger.viewRuntimeLog()`
 
 ```
 
+3. clear runtime log
+
+```lua
+logger.clearRuntimeLog()
+```
+
 ## Self-Promotion
 
 Like this plugin? Star the repository on
 GitHub.
 
 Love this plugin? Follow [me](https://wsdjeg.net/) on
-[GitHub](https://github.com/wsdjeg) and
-[Twitter](http://twitter.com/wsdtty).
+[GitHub](https://github.com/wsdjeg).
 
 ## License
 
