@@ -1,11 +1,3 @@
---=============================================================================
--- logger.lua --- logger implemented in lua
--- Copyright (c) 2016-2023 Wang Shidong & Contributors
--- Author: Wang Shidong < wsdjeg@outlook.com >
--- URL: https://spacevim.org
--- License: GPLv3
---=============================================================================
-
 local M = {}
 
 local logger = require('logger.base')
@@ -32,7 +24,7 @@ end
 
 function M.viewRuntimeLog()
   -- this function should be more faster, and view runtime log without filter
-  local info = '### SpaceVim runtime log :\n\n' .. logger.view_all()
+  local info = '### Runtime log :\n\n' .. logger.view_all()
   cmd('tabnew')
   cmd('setl nobuflisted')
   cmd('nnoremap <buffer><silent> q :tabclose!<CR>')
@@ -40,7 +32,7 @@ function M.viewRuntimeLog()
   fn.append(0, fn.split(info, '\n'))
   cmd('setl nomodifiable')
   cmd('setl buftype=nofile')
-  cmd('setl filetype=SpaceVimLog')
+  cmd('setl filetype=RuntimeLog')
   -- M.syntax_extra()
 end
 

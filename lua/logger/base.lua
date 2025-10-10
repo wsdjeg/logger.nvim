@@ -1,10 +1,3 @@
---=============================================================================
--- logger.lua --- logger api implemented in lua
--- Copyright (c) 2016-2023 Wang Shidong & Contributors
--- Author: Wang Shidong < wsdjeg@outlook.com >
--- License: GPLv3
---=============================================================================
-
 local rtplog = {}
 
 local M = {
