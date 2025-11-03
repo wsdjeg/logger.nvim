@@ -27,7 +27,7 @@ function M.viewRuntimeLog()
   local info = '### Runtime log :\n\n' .. logger.view_all()
   cmd('tabnew')
   cmd('setl nobuflisted')
-  cmd('nnoremap <buffer><silent> q :tabclose!<CR>')
+  cmd('nnoremap <buffer><silent> q :bd!<CR>')
   -- put info into buffer
   fn.append(0, fn.split(info, '\n'))
   cmd('setl nomodifiable')
