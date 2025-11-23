@@ -2,6 +2,12 @@
 
 `logger.nvim` is a simple runtime logger plugin for Neovim.
 
+[![GitHub License](https://img.shields.io/github/license/wsdjeg/logger.nvim)](LICENSE)
+[![GitHub Issues or Pull Requests](https://img.shields.io/github/issues/wsdjeg/logger.nvim)](https://github.com/wsdjeg/logger.nvim/issues)
+[![GitHub commit activity](https://img.shields.io/github/commit-activity/m/wsdjeg/logger.nvim)](https://github.com/wsdjeg/logger.nvim/commits/master/)
+[![GitHub Release](https://img.shields.io/github/v/release/wsdjeg/logger.nvim)](https://github.com/wsdjeg/logger.nvim/releases)
+[![luarocks](https://img.shields.io/luarocks/v/wsdjeg/logger.nvim)](https://luarocks.org/modules/wsdjeg/logger.nvim)
+
 <!-- vim-markdown-toc GFM -->
 
 - [Installation](#installation)
@@ -25,6 +31,12 @@ require('plug').add({
     end,
   },
 })
+```
+
+Using [luarocks](https://luarocks.org/)
+
+```
+luarocks install logger.nvim
 ```
 
 ## Setup
