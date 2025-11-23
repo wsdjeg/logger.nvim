@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/wsdjeg/logger.nvim/compare/v1.0.1...v1.1.0) (2025-11-23)
+
+
+### Features
+
+* add luarocks support ([342eee0](https://github.com/wsdjeg/logger.nvim/commit/342eee068ac06b339b3b876c5f21386b7ccdd7ed))
+
 ## [1.0.1](https://github.com/wsdjeg/logger.nvim/compare/v1.0.0...v1.0.1) (2025-11-03)
 
 
