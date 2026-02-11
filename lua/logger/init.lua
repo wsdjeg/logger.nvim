@@ -40,7 +40,6 @@ function M.clearRuntimeLog()
   logger.clear()
 end
 
-
 function M.syntax_extra()
   fn.matchadd('ErrorMsg', '.*[\\sError\\s\\].*')
   fn.matchadd('WarningMsg', '.*[\\sWarn\\s\\].*')
