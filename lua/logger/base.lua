@@ -1,5 +1,25 @@
-local rtplog = {}
+local uv = vim.uv or vim.loop
 
+local rtplog = {} ---@type string[]
+
+---@alias loggerLevel 0|1|2|3|4
+---@alias loggerVerbose 1|2|3|4
+
+---@class loggerMsg
+---@field name string
+---@field time string
+---@field msg string
+---@field level loggerLevel
+---@field str string
+
+---@class logger.Base
+---@field name string
+---@field silent integer|boolean
+---@field level loggerLevel
+---@field verbose loggerVerbose
+---@field file string
+---@field temp loggerMsg[]
+---@field levels string[]
 local M = {
   name = '',
   silent = 1,
@@ -12,25 +32,28 @@ local M = {
 M.levels = { 'Info ', 'Warn ', 'Error', 'Debug' }
 M.clock = vim.fn.reltime()
 
+---@param sl boolean|integer
 function M.set_silent(sl)
   if type(sl) == 'boolean' then
     M.silent = sl
-  elseif type(sl) == 'number' then
+    return
+  end
+  if type(sl) == 'number' then
     -- this is for backward compatibility.
-    if sl == 1 then
-      M.silent = true
-    elseif sl == 0 then
-      M.silent = false
-    end
+    M.silent = sl == 1 and true or (sl == 0 and false or M.silent)
   end
 end
 
+---@param file string
 function M.set_file(file)
-  if file then
-    M.file = file
+  if not file then
+    return
   end
+
+  M.file = file
 end
 
+---@param vb loggerVerbose
 function M.set_verbose(vb)
   -- verbose should be 1 - 4
   -- message type: log debug, info, warn, error
@@ -42,24 +65,30 @@ function M.set_verbose(vb)
   M.verbose = vb
 end
 
+---@param l loggerLevel
 function M.set_level(l)
+  if not vim.list_contains({ 0, 1, 2, 3, 4 }, l) then
+    return
+  end
+
   -- the level only can be:
   -- 0 : log debug, info, warn, error messages
   -- 1 : log info, warn, error messages
   -- 2 : log warn, error messages
   -- 3 : log error messages
-  if l == 0 or l == 1 or l == 2 or l == 3 then
-    M.level = l
-  end
+  M.level = l
 end
 
+---@param msg string
+---@param l loggerLevel
+---@return loggerMsg log_msg
 function M._build_msg(msg, l)
   msg = msg or ''
-  local _, mic = vim.loop.gettimeofday()
+  local _, mic = uv.gettimeofday()
   local c = string.format('%s:%03d', os.date('%H:%M:%S'), mic / 1000)
   -- local log = string.format('[ %s ] [%s] [ %s ] %s', M.name, c, M.levels[l], msg)
 
-  return {
+  return { ---@type loggerMsg
     name = M.name,
     time = c,
     msg = msg,
@@ -68,6 +97,7 @@ function M._build_msg(msg, l)
   }
 end
 
+---@param log loggerMsg
 function M.write(log)
   table.insert(M.temp, log)
   table.insert(rtplog, log.str)
@@ -77,63 +107,72 @@ function M.clear()
   rtplog = {}
 end
 
+---@param msg string
 function M.debug(msg)
-  if M.level <= 0 then
-    local log = M._build_msg(msg, 4)
-    M.write(log)
+  if M.level > 0 then
+    return
   end
+
+  M.write(M._build_msg(msg, 4))
 end
 
+---@param msg string
 function M.error(msg)
-  local log = M._build_msg(msg, 3)
-  M.write(log)
+  M.write(M._build_msg(msg, 3))
 end
 
+---@param msg string
 function M.warn(msg, ...)
-  if M.level <= 2 then
-    local log = M._build_msg(msg, 2)
-    local issilent = select(1, ...)
-    if type(issilent) == 'number' then
-      if issilent == 1 then
-        issilent = true
-      else
-        issilent = false
-      end
-    elseif type(issilent) ~= 'boolean' then
-      issilent = false
-    end
-    M.write(log)
+  if M.level > 2 then
+    return
   end
+
+  local issilent = select(1, ...)
+  if type(issilent) == 'number' then
+    issilent = issilent == 1
+  elseif type(issilent) ~= 'boolean' then
+    issilent = false
+  end
+  M.write(M._build_msg(msg, 2))
 end
 
+---@param msg string
 function M.info(msg)
-  if M.level <= 1 then
-    local log = M._build_msg(msg, 1)
-    M.write(log)
+  if M.level > 1 then
+    return
   end
+
+  M.write(M._build_msg(msg, 1))
 end
 
+---@return string info
 function M.view_all()
   local info = table.concat(rtplog, '\n')
   return info
 end
 
+---@param l loggerLevel
+---@return string info
 function M.view(l)
   local info = ''
   for _, log in ipairs(M.temp) do
     if log.level >= l then
-      info = info .. log.str .. '\n'
+      info = string.format('%s%s\n', info, log.str)
     end
   end
   return info
 end
 
+---@param name string
 function M.set_name(name)
-  if type(name) == 'string' then
-    M.name = name
+  if type(name) ~= 'string' then
+    return
   end
+
+  M.name = name
 end
 
+---@return string name
 function M.get_name()
   return M.name
 end
