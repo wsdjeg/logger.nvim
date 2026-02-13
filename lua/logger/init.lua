@@ -34,7 +34,12 @@ function M.viewRuntimeLog()
 
   local bufnr = vim.api.nvim_get_current_buf()
   vim.api.nvim_set_option_value('buflisted', false, { buf = bufnr })
-  vim.keymap.set('n', 'q', ':bd!<CR>', { noremap = true, silent = true, buffer = bufnr })
+  vim.keymap.set(
+    'n',
+    'q',
+    ':bd!<CR>',
+    { noremap = true, silent = true, buffer = bufnr }
+  )
 
   -- put info into buffer
   vim.fn.append(0, vim.fn.split(info, '\n'))
