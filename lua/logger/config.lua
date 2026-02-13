@@ -1,5 +1,5 @@
 ---@class loggerOpts
----@field level? 0|1|2|3
+---@field level? loggerLevel
 ---@field file? string
 
 ---@class logger.Config

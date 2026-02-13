@@ -1,33 +1,35 @@
 ---@class logger
 local M = {}
 
-local logger = require('logger.base')
+local base = require('logger.base')
 
-logger.set_name('logger')
+base.set_name('logger')
+
+M.setup = require('logger.config').setup
 
 ---@param msg string
 function M.info(msg)
-  logger.info(msg)
+  base.info(msg)
 end
 
 ---@param msg string
 function M.warn(msg, ...)
-  logger.warn(msg, ...)
+  base.warn(msg, ...)
 end
 
 ---@param msg string
 function M.error(msg)
-  logger.error(msg)
+  base.error(msg)
 end
 
 ---@param msg string
 function M.debug(msg)
-  logger.debug(msg)
+  base.debug(msg)
 end
 
 function M.viewRuntimeLog()
   -- this function should be more faster, and view runtime log without filter
-  local info = '### Runtime log :\n\n' .. logger.view_all()
+  local info = string.format('### Runtime log :\n\n%s', base.view_all())
   vim.cmd.tabnew()
 
   local bufnr = vim.api.nvim_get_current_buf()
@@ -43,7 +45,7 @@ function M.viewRuntimeLog()
 end
 
 function M.clearRuntimeLog()
-  logger.clear()
+  base.clear()
 end
 
 function M.syntax_extra()
@@ -55,41 +57,41 @@ end
 function M.derive(name)
   ---@class loggerDerive
   local derive = {
-    origin_name = logger.get_name(),
+    origin_name = base.get_name(),
     _debug_mode = true,
     derive_name = vim.fn.printf(
-      '%' .. string.format('%sS', vim.fn.strdisplaywidth(logger.get_name())),
+      '%' .. string.format('%sS', vim.fn.strdisplaywidth(base.get_name())),
       name
     ),
   }
 
   ---@param msg string
   function derive.info(msg)
-    logger.set_name(derive.derive_name)
-    logger.info(msg)
-    logger.set_name(derive.origin_name)
+    base.set_name(derive.derive_name)
+    base.info(msg)
+    base.set_name(derive.origin_name)
   end
 
   ---@param msg string
   function derive.warn(msg)
-    logger.set_name(derive.derive_name)
-    logger.warn(msg)
-    logger.set_name(derive.origin_name)
+    base.set_name(derive.derive_name)
+    base.warn(msg)
+    base.set_name(derive.origin_name)
   end
 
   ---@param msg string
   function derive.error(msg)
-    logger.set_name(derive.derive_name)
-    logger.error(msg)
-    logger.set_name(derive.origin_name)
+    base.set_name(derive.derive_name)
+    base.error(msg)
+    base.set_name(derive.origin_name)
   end
 
   ---@param msg string
   function derive.debug(msg)
     if derive._debug_mode then
-      logger.set_name(derive.derive_name)
-      logger.debug(msg)
-      logger.set_name(derive.origin_name)
+      base.set_name(derive.derive_name)
+      base.debug(msg)
+      base.set_name(derive.origin_name)
     end
   end
 
@@ -107,11 +109,6 @@ function M.derive(name)
   -- }}}
 
   return derive
-end
-
----@param opt? loggerOpts
-function M.setup(opt)
-  require('logger.config').setup(opt)
 end
 
 return M

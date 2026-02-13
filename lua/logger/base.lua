@@ -4,6 +4,7 @@ local rtplog = {} ---@type string[]
 
 ---@alias loggerLevel 0|1|2|3|4
 ---@alias loggerVerbose 1|2|3|4
+---@alias loggerLevelStrings { [1]: 'Info ', [2]: 'Warn ', [3]: 'Error ', [4]: 'Debug ' }
 
 ---@class loggerMsg
 ---@field name string
@@ -29,7 +30,7 @@ local M = {
   temp = {},
 }
 
-M.levels = { 'Info ', 'Warn ', 'Error', 'Debug' }
+M.levels = { 'Info ', 'Warn ', 'Error ', 'Debug ' } ---@type loggerLevelStrings
 M.clock = vim.fn.reltime()
 
 ---@param sl boolean|integer
