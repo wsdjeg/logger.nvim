@@ -65,29 +65,44 @@ function M.derive(name)
     origin_name = base.get_name(),
     _debug_mode = true,
     derive_name = vim.fn.printf(
-      '%' .. string.format('%sS', vim.fn.strdisplaywidth(base.get_name())),
+      '%' .. string.format('%dS', base.width),
       name
     ),
   }
 
+  function derive.set_level(level)
+    if vim.tbl_contains({ 0, 1, 2, 3 }, level) then
+      derive.level = level
+    end
+  end
+
   ---@param msg string
   function derive.info(msg)
     base.set_name(derive.derive_name)
+    local l = base.level
+    base.set_level(derive.level)
     base.info(msg)
+    base.set_level(l)
     base.set_name(derive.origin_name)
   end
 
   ---@param msg string
   function derive.warn(msg)
     base.set_name(derive.derive_name)
+    local l = base.level
+    base.set_level(derive.level)
     base.warn(msg)
+    base.set_level(l)
     base.set_name(derive.origin_name)
   end
 
   ---@param msg string
   function derive.error(msg)
     base.set_name(derive.derive_name)
+    local l = base.level
+    base.set_level(derive.level)
     base.error(msg)
+    base.set_level(l)
     base.set_name(derive.origin_name)
   end
 
@@ -95,7 +110,10 @@ function M.derive(name)
   function derive.debug(msg)
     if derive._debug_mode then
       base.set_name(derive.derive_name)
+      local l = base.level
+      base.set_level(derive.level)
       base.debug(msg)
+      base.set_level(l)
       base.set_name(derive.origin_name)
     end
   end
