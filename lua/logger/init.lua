@@ -61,14 +61,11 @@ end
 ---@param name string
 function M.derive(name)
   ---@class loggerDerive
-  local derive = {
-    origin_name = base.get_name(),
-    _debug_mode = true,
-    derive_name = vim.fn.printf(
-      '%' .. string.format('%dS', base.width),
-      name
-    ),
-  }
+  local derive = {}
+
+  local derive_name =
+    vim.fn.printf('%' .. string.format('%dS', base.width), name)
+  local origin_name = base.get_name()
 
   function derive.set_level(level)
     if vim.tbl_contains({ 0, 1, 2, 3 }, level) then
@@ -78,59 +75,43 @@ function M.derive(name)
 
   ---@param msg string
   function derive.info(msg)
-    base.set_name(derive.derive_name)
+    base.set_name(derive_name)
     local l = base.level
     base.set_level(derive.level)
     base.info(msg)
     base.set_level(l)
-    base.set_name(derive.origin_name)
+    base.set_name(origin_name)
   end
 
   ---@param msg string
   function derive.warn(msg)
-    base.set_name(derive.derive_name)
+    base.set_name(derive_name)
     local l = base.level
     base.set_level(derive.level)
     base.warn(msg)
     base.set_level(l)
-    base.set_name(derive.origin_name)
+    base.set_name(origin_name)
   end
 
   ---@param msg string
   function derive.error(msg)
-    base.set_name(derive.derive_name)
+    base.set_name(derive_name)
     local l = base.level
     base.set_level(derive.level)
     base.error(msg)
     base.set_level(l)
-    base.set_name(derive.origin_name)
+    base.set_name(origin_name)
   end
 
   ---@param msg string
   function derive.debug(msg)
-    if derive._debug_mode then
-      base.set_name(derive.derive_name)
-      local l = base.level
-      base.set_level(derive.level)
-      base.debug(msg)
-      base.set_level(l)
-      base.set_name(derive.origin_name)
-    end
+    base.set_name(derive_name)
+    local l = base.level
+    base.set_level(derive.level)
+    base.debug(msg)
+    base.set_level(l)
+    base.set_name(origin_name)
   end
-
-  function derive.start_debug()
-    derive._debug_mode = true
-  end
-
-  function derive.stop_debug()
-    derive._debug_mode = false
-  end
-
-  function derive.debug_enabled() -- {{{
-    return derive._debug_mode
-  end
-  -- }}}
-
   return derive
 end
 
