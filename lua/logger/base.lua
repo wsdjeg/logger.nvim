@@ -95,7 +95,7 @@ function M._build_msg(msg, l)
     msg = msg,
     level = l,
     str = string.format(
-      '[ %s ] [ %s ] [ %s ] %s',
+      '[ %s ] [ %5s ] [ %s ] %s',
       c,
       M.levels[l],
       M.name,
