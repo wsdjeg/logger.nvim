@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.0.0](https://github.com/wsdjeg/logger.nvim/compare/v1.1.1...v2.0.0) (2026-02-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* make derive_name private
+
+### Features
+
+* support derive logger level ([6043f1e](https://github.com/wsdjeg/logger.nvim/commit/6043f1ebe04ac72860f10f6f4efc29f3f3eb1041))
+
+
+### Bug Fixes
+
+* fix string format ([0b8935c](https://github.com/wsdjeg/logger.nvim/commit/0b8935cc6863e5dca3f71642c53522b3d37083c2))
+* indent log type ([56d6083](https://github.com/wsdjeg/logger.nvim/commit/56d6083ab51a00bd5b574af896659f24e492683f))
+* make derive_name private ([5b2c8f9](https://github.com/wsdjeg/logger.nvim/commit/5b2c8f9d38a034b6a975b7bea82ee5ce35c92b16))
+* remove verbose ([b86c42d](https://github.com/wsdjeg/logger.nvim/commit/b86c42df49740154b831a7a5602fc61e49642387))
+* use string.format instead of vim.fn ([b85884d](https://github.com/wsdjeg/logger.nvim/commit/b85884dbd05663fcc4d877e963f05cdec84b5610))
+
 ## [1.1.1](https://github.com/wsdjeg/logger.nvim/compare/v1.1.0...v1.1.1) (2026-02-13)
 
 
