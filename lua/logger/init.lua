@@ -64,7 +64,7 @@ function M.derive(name)
   local derive = {}
 
   local derive_name =
-    vim.fn.printf('%' .. string.format('%dS', base.width), name)
+    string.format('%' .. string.format('%dS', base.width), name)
   local origin_name = base.get_name()
 
   function derive.set_level(level)
