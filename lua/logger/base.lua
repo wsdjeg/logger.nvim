@@ -17,7 +17,6 @@ local rtplog = {} ---@type string[]
 ---@field name string
 ---@field silent integer|boolean
 ---@field level loggerLevel
----@field verbose loggerVerbose
 ---@field file string
 ---@field temp loggerMsg[]
 ---@field levels string[]
@@ -25,7 +24,6 @@ local M = {
   name = '',
   silent = 1,
   level = 1,
-  verbose = 1,
   file = '',
   temp = {},
 }
@@ -52,18 +50,6 @@ function M.set_file(file)
   end
 
   M.file = file
-end
-
----@param vb loggerVerbose
-function M.set_verbose(vb)
-  -- verbose should be 1 - 4
-  -- message type: log debug, info, warn, error
-  -- info and debug should not be print to screen.
-  -- the default verbose is 1
-  -- 1: notify nothing
-  -- 2: notify only error
-  -- 3: notify warn and error
-  M.verbose = vb
 end
 
 ---@param l loggerLevel
