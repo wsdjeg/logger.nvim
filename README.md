@@ -225,7 +225,7 @@ require('logger').viewRuntimeLog()
 ### Complete Plugin Integration
 
 ```lua
-local logger = require('derive('myplugin')
+local logger = require('logger').derive('myplugin')
 
 local M = {}
 
@@ -255,7 +255,7 @@ function M.processData(data)
     return nil
   end
   
- Processing logic
+  -- Processing logic
   logger.info('Data processed successfully')
 end
 
@@ -264,13 +264,14 @@ return M
 
 ### Debugging Workflow with Dynamic Level Control
 
-```lua logger = require('logger').derive('debugger')
+```lua
+local logger = require('logger').derive('debugger')
 
 -- Set to debug level for detailed logging
 logger.set_level(0)
 
 function debugFunction()
-  logger.debuging debugFunction')
+  logger.debug('Entering debugFunction')
   
   local x = 42
   logger.debug('x = ' .. x)
@@ -281,6 +282,7 @@ function debugFunction()
     logger.warn('x is less than or equal to 10')
   end
   
+
   logger.debug('Exiting debugFunction')
 end
 
@@ -294,17 +296,18 @@ logger.set_level(2)
 local logger = require('logger').derive('errorhandler')
 
 function safeOperation()
-  -- Temporarily enable silent mode for clean
-  local was = logger.silent
+  -- Temporarily enable silent mode for clean output
+  local wasSilent = logger.silent
   logger.set_silent(true)
   
-  local result = pcall(dangerousFunction)
+  local success, result = pcall(dangerousFunction)
   
- Restore original
+  -- Restore original state
   logger.set_silent(wasSilent)
   
   if success then
-    logger.info('Operation completed: ' ..    return result
+    logger.info('Operation completed: ' .. result)
+    return result
   else
     logger.error('Operation failed: ' .. result)
     -- Additional error handling
@@ -329,9 +332,10 @@ function initializePlugin()
   
   -- UI initialization
   uiLogger.debug('Setting up UI components')
-  -- ... UI logic uiLogger.info('UI initialized successfully')
+  -- ... UI logic
+  uiLogger.info('UI initialized successfully')
   
-  main('Plugin system ready')
+  mainLogger.info('Plugin system ready')
 end
 ```
 
