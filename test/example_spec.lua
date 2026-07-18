@@ -12,10 +12,12 @@ function TestLoggerSetup:setUp()
   base.set_level(1)
   base.set_name('logger')
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerSetup:tearDown()
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerSetup:test_setup_sets_level()
@@ -34,10 +36,12 @@ function TestLoggerLevels:setUp()
   base.set_level(0) -- Debug: log everything
   base.set_name('logger')
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerLevels:tearDown()
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerLevels:test_info_logging()
@@ -73,10 +77,12 @@ TestLoggerLevelFiltering = {}
 function TestLoggerLevelFiltering:setUp()
   base.set_name('logger')
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerLevelFiltering:tearDown()
   base.clear()
+  base.set_file('')
   base.set_level(1) -- Reset to default
 end
 
@@ -114,10 +120,12 @@ function TestLoggerDerive:setUp()
   base.set_level(0)
   base.set_name('logger')
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerDerive:tearDown()
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerDerive:test_derive_returns_table()
@@ -142,10 +150,12 @@ TestLoggerClearRuntimeLog = {}
 function TestLoggerClearRuntimeLog:setUp()
   base.set_level(0)
   base.set_name('logger')
+  base.set_file('')
 end
 
 function TestLoggerClearRuntimeLog:tearDown()
   base.clear()
+  base.set_file('')
 end
 
 function TestLoggerClearRuntimeLog:test_clear_runtime_log()
@@ -153,6 +163,62 @@ function TestLoggerClearRuntimeLog:test_clear_runtime_log()
   base.clear()
   local logs = base.view_all()
   lu.assertEquals(logs, '')
+end
+
+TestLoggerFile = {}
+
+local test_log_file = ''
+
+function TestLoggerFile:setUp()
+  base.set_level(0)
+  base.set_name('logger')
+  base.clear()
+  base.set_file('')
+  -- use os.tmpname for cross-platform temp file
+  test_log_file = os.tmpname()
+  os.remove(test_log_file)
+end
+
+function TestLoggerFile:tearDown()
+  base.clear()
+  base.set_file('')
+  if test_log_file and test_log_file ~= '' then
+    os.remove(test_log_file)
+  end
+end
+
+function TestLoggerFile:test_write_to_file()
+  base.set_file(test_log_file)
+  logger.info('file log message')
+  local f = io.open(test_log_file, 'r')
+  lu.assertNotNil(f)
+  if f then
+    local content = f:read('*a')
+    f:close()
+    lu.assertTrue(content:find('file log message') ~= nil)
+  end
+end
+
+function TestLoggerFile:test_append_to_file()
+  base.set_file(test_log_file)
+  logger.info('first message')
+  logger.info('second message')
+  local f = io.open(test_log_file, 'r')
+  lu.assertNotNil(f)
+  if f then
+    local content = f:read('*a')
+    f:close()
+    lu.assertTrue(content:find('first message') ~= nil)
+    lu.assertTrue(content:find('second message') ~= nil)
+  end
+end
+
+function TestLoggerFile:test_no_file_no_error()
+  base.set_file('')
+  logger.info('runtime only message')
+  -- should not error, runtime log should still work
+  local logs = base.view_all()
+  lu.assertTrue(logs:find('runtime only message') ~= nil)
 end
 
 return TestLoggerSetup

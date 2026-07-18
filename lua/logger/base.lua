@@ -95,6 +95,14 @@ end
 function M.write(log)
   table.insert(M.temp, log)
   table.insert(rtplog, log.str)
+
+  if M.file and M.file ~= '' then
+    local f = io.open(M.file, 'a')
+    if f then
+      f:write(log.str .. '\n')
+      f:close()
+    end
+  end
 end
 
 function M.clear()
@@ -172,3 +180,4 @@ function M.get_name()
 end
 
 return M
+
