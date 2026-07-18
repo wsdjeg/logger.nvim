@@ -1,5 +1,33 @@
 # Changelog
 
+## [2.0.0](https://github.com/wsdjeg/logger.nvim/compare/v1.1.1...v2.0.0) (2026-07-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* make derive_name private
+
+### Features
+
+* support derive logger level ([6043f1e](https://github.com/wsdjeg/logger.nvim/commit/6043f1ebe04ac72860f10f6f4efc29f3f3eb1041))
+
+
+### Bug Fixes
+
+* fix string format ([0b8935c](https://github.com/wsdjeg/logger.nvim/commit/0b8935cc6863e5dca3f71642c53522b3d37083c2))
+* indent log type ([56d6083](https://github.com/wsdjeg/logger.nvim/commit/56d6083ab51a00bd5b574af896659f24e492683f))
+* make derive_name private ([5b2c8f9](https://github.com/wsdjeg/logger.nvim/commit/5b2c8f9d38a034b6a975b7bea82ee5ce35c92b16))
+* remove verbose ([b86c42d](https://github.com/wsdjeg/logger.nvim/commit/b86c42df49740154b831a7a5602fc61e49642387))
+* use string.format instead of vim.fn ([b85884d](https://github.com/wsdjeg/logger.nvim/commit/b85884dbd05663fcc4d877e963f05cdec84b5610))
+* write log messages to file when file path is set ([c168ac2](https://github.com/wsdjeg/logger.nvim/commit/c168ac29316996cb021d3838f0bc16be1c8156d6)), closes [#8](https://github.com/wsdjeg/logger.nvim/issues/8)
+
+
+### Documentation
+
+* rewrite README to match actual source code behavior ([37a6d45](https://github.com/wsdjeg/logger.nvim/commit/37a6d45bd796da4a2140f2810e19c712424dbfd7))
+* update readme ([a2cd06e](https://github.com/wsdjeg/logger.nvim/commit/a2cd06e10e5a10d30e329da8673175092f0e586a))
+* update README with file logging, accurate API, and more install methods ([281a1e0](https://github.com/wsdjeg/logger.nvim/commit/281a1e0a76a95c50d44f0d315392d9793f2c5f0f))
+
 ## [1.1.1](https://github.com/wsdjeg/logger.nvim/compare/v1.1.0...v1.1.1) (2026-02-13)
 
 
