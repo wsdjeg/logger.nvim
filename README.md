@@ -1,6 +1,8 @@
 # logger.nvim
 
 `logger.nvim` is a simple runtime logger plugin for Neovim.
+It provides four log levels, in-memory runtime log storage,
+optional file logging, and per-plugin derived loggers.
 
 [![Run Tests](https://github.com/wsdjeg/logger.nvim/actions/workflows/test.yml/badge.svg)](https://github.com/wsdjeg/logger.nvim/actions/workflows/test.yml)
 [![GitHub License](https://img.shields.io/github/license/wsdjeg/logger.nvim)](LICENSE)
@@ -11,145 +13,130 @@
 
 <!-- vim-markdown-toc GFM -->
 
-- [Features](#features)
-- [Installation](#installation)
-- [Setup](#setup)
-- [Usage](#usage)
-    - [Basic Usage](#basic-usage)
-    - [Plugin-specific Logger](#plugin-specific-logger)
-    - [File Logging](#file-logging)
-    - [Viewing Runtime Log](#viewing-runtime-log)
-- [API Reference](#api-reference)
-    - [Core Functions](#core-functions)
-        - [`setup(options: table)`](#setupoptions-table)
-        - [`derive(name: string): Logger`](#derivename-string-logger)
-    - [Logging Methods](#logging-methods)
-        - [`debug(msg: string)`](#debugmsg-string)
-        - [`info(msg: string)`](#infomsg-string)
-        - [`warn(msg: string, ...)`](#warnmsg-string-)
-        - [`error(msg: string)`](#errormsg-string)
-    - [Utility Functions](#utility-functions)
-        - [`viewRuntimeLog()`](#viewruntimelog)
-        - [`clearRuntimeLog()`](#clearruntimelog)
-- [Logging Levels](#logging-levels)
-- [Advanced Examples](#advanced-examples)
-    - [Complete Plugin Integration](#complete-plugin-integration)
-    - [Debugging Workflow with Dynamic Level Control](#debugging-workflow-with-dynamic-level-control)
-    - [Multi-plugin Logging System](#multi-plugin-logging-system)
-- [Self-Promotion](#self-promotion)
-- [License](#license)
+- [✨ Features](#-features)
+- [📦 Installation](#-installation)
+- [🔧 Configuration](#-configuration)
+- [⚙️ Basic Usage](#️-basic-usage)
+- [🔌 Derived Logger](#-derived-logger)
+- [📝 File Logging](#-file-logging)
+- [👁️ View Runtime Log](#️-view-runtime-log)
+- [📚 API](#-api)
+    - [setup(opts)](#setupopts)
+    - [info(msg)](#infomsg)
+    - [warn(msg)](#warnmsg)
+    - [error(msg)](#errormsg)
+    - [debug(msg)](#debugmsg)
+    - [derive(name)](#derivename)
+    - [viewRuntimeLog()](#viewruntimelog)
+    - [clearRuntimeLog()](#clearruntimelog)
+- [📊 Logging Levels](#-logging-levels)
+- [📣 Self-Promotion](#-self-promotion)
+- [📄 License](#-license)
 
-<!-- vim-markdown-toc -->
+<!-- /vim-markdown-toc -->
 
-## Features
+## ✨ Features
 
-- **Four log levels**: Debug, Info, Warn, Error
-- **Runtime log**: All log messages are stored in memory and can be viewed in a buffer
-- **File logging**: Optionally write logs to a file (appended on each write)
-- **Plugin-specific loggers**: Create named loggers via `derive()` for each plugin
-- **Per-logger level control**: Each derived logger can have its own log level
-- **Minimal dependencies**: Works with Neovim's built-in Lua, no external libraries needed
+- Four log levels: Debug, Info, Warn, Error
+- Runtime log stored in memory, viewable in a buffer
+- Optional file logging with append mode
+- Per-plugin derived loggers with independent level control
+- Minimal dependencies — uses only Neovim's built-in Lua
 
-## Installation
+## 📦 Installation
 
-Using [nvim-plug](https://github.com/wsdjeg/nvim-plug):
+logger.nvim works with all major Neovim plugin managers.
 
-```lua
-require('plug').add({
+- **Using [nvim-plug](https://github.com/wsdjeg/nvim-plug)**
+
+  ```lua
+  require('plug').add({
+    {
+      'wsdjeg/logger.nvim',
+      config = function()
+        require('logger').setup()
+      end,
+    },
+  })
+  ```
+
+- **Using [lazy.nvim](https://github.com/folke/lazy.nvim)**
+
+  ```lua
   {
     'wsdjeg/logger.nvim',
     config = function()
-      require('logger').setup({})
+      require('logger').setup()
     end,
-  },
-})
-```
+  }
+  ```
 
-Using [lazy.nvim](https://github.com/folke/lazy.nvim):
+- **Using [packer.nvim](https://github.com/wbthomason/packer.nvim)**
 
-```lua
-{
-  'wsdjeg/logger.nvim',
-  config = function()
-    require('logger').setup({})
-  end,
-}
-```
+  ```lua
+  use({
+    'wsdjeg/logger.nvim',
+    config = function()
+      require('logger').setup()
+    end,
+  })
+  ```
 
-Using [packer.nvim](https://github.com/wbthomason/packer.nvim):
+- **Using [luarocks](https://luarocks.org)**
 
-```lua
-use {
-  'wsdjeg/logger.nvim',
-  config = function()
-    require('logger').setup({})
-  end,
-}
-```
+  ```
+  luarocks install logger.nvim
+  ```
 
-Using [luarocks](https://luarocks.org):
-
-```
-luarocks install logger.nvim
-```
-
-## Setup
+## 🔧 Configuration
 
 ```lua
 require('logger').setup({
-  -- the level only can be:
-  -- 0 : log debug, info, warn, error messages
-  -- 1 : log info, warn, error messages
-  -- 2 : log warn, error messages
-  -- 3 : log error messages
-  level = 0,
-  -- when file is set, log messages are appended to this file
-  file = '',        -- e.g. '~/.cache/nvim-log/log.txt'
-  -- width of logger name in log output (for alignment)
-  width = 12,
+  level = 1,  -- 0:debug 1:info 2:warn 3:error (default: 1)
+  file = '',  -- log file path, empty = runtime only (default: '')
 })
 ```
 
-## Usage
-
-### Basic Usage
+## ⚙️ Basic Usage
 
 ```lua
 local logger = require('logger')
 
-logger.info('this is default log')
+logger.info('plugin initialized')
+logger.warn('deprecated API called')
+logger.error('failed to load config')
+logger.debug('internal state: ' .. tostring(state))
 ```
 
 Output format:
 
 ```
-[ 22:30:45:123 ] [ Info ] [ logger ] this is default log
+[ 22:30:45:123 ] [  Info ] [ logger ] plugin initialized
+[ 22:30:45:124 ] [  Warn ] [ logger ] deprecated API called
+[ 22:30:45:125 ] [ Error ] [ logger ] failed to load config
+[ 22:30:45:126 ] [ Debug ] [ logger ] internal state: nil
 ```
 
-### Plugin-specific Logger
+## 🔌 Derived Logger
 
 Create a named logger for your plugin with `derive()`:
 
 ```lua
 local logger = require('logger').derive('myplugin')
 
-logger.warn('configuration missing')
+logger.info('starting up')
+logger.set_level(0)  -- debug level for this plugin only
 ```
 
-Output:
+The derived logger name is right-aligned to 12 characters:
 
 ```
-[ 22:30:45:456 ] [ Warn ] [    myplugin ] configuration missing
+[ 22:30:45:123 ] [  Info ] [    myplugin ] starting up
 ```
 
-The derived logger can have its own log level, independent of the global level:
+Each derived logger has its own `set_level`, independent of the global level.
 
-```lua
-local logger = require('logger').derive('myplugin')
-logger.set_level(0) -- debug level for this plugin only
-```
-
-### File Logging
+## 📝 File Logging
 
 When `file` is set in `setup()`, every log message is appended to the file:
 
@@ -162,17 +149,18 @@ require('logger').setup({
 require('logger').info('this will be written to the file')
 ```
 
-Log messages are appended on each write, so the file persists across Neovim sessions. Each line in the file has the same format as the runtime log.
+Each line in the file has the same format as the runtime log.
+Messages are appended on each write, so the file persists across sessions.
 
-### Viewing Runtime Log
+## 👁️ View Runtime Log
 
-All log messages are stored in memory (runtime log). You can view them at any time:
+All log messages are stored in memory. View them at any time:
 
 ```lua
 require('logger').viewRuntimeLog()
 ```
 
-This opens a new tab with all accumulated log messages. Press `q` to close.
+Opens a new tab showing all accumulated logs. Press `q` to close.
 
 To clear the runtime log:
 
@@ -180,56 +168,36 @@ To clear the runtime log:
 require('logger').clearRuntimeLog()
 ```
 
-## API Reference
+## 📚 API
 
-### Core Functions
+| function | description |
+| -------- | ----------- |
+| `setup(opts)` | Initialize with `level` and `file` options |
+| `info(msg)` | Log info-level message |
+| `warn(msg)` | Log warning-level message |
+| `error(msg)` | Log error-level message |
+| `debug(msg)` | Log debug-level message |
+| `derive(name)` | Create plugin-specific logger |
+| `viewRuntimeLog()` | View runtime log in a new tab |
+| `clearRuntimeLog()` | Clear in-memory runtime log |
 
-#### `setup(options: table)`
+### setup(opts)
 
 Initialize the logger with custom configuration.
 
-**Parameters:**
-- `options.level` (number, optional): Logging level (0-3), default is `1`
-- `options.file` (string, optional): Log file path. When set, log messages are appended to this file
-- `options.width` (number, optional): Width of logger name in output for alignment, default is `12`
+| option | type | default | description |
+| ------ | ---- | ------- | ----------- |
+| `level` | `0\|1\|2\|3` | `1` | Logging level |
+| `file` | `string` | `''` | Log file path, empty for runtime only |
 
-**Example:**
 ```lua
 require('logger').setup({
   level = 1,
   file = vim.fn.stdpath('cache') .. '/myapp.log',
-  width = 20,
 })
 ```
 
-#### `derive(name: string): Logger`
-
-Create a named logger instance for your plugin.
-
-**Parameters:**
-- `name` (string): Plugin or module name
-
-**Returns:**
-- `Logger` table with `info`, `warn`, `error`, `debug`, and `set_level` methods
-
-**Example:**
-```lua
-local myLogger = require('logger').derive('treesitter')
-myLogger.set_level(0) -- set debug level for this logger only
-myLogger.debug('Parsing AST')
-```
-
-### Logging Methods
-
-#### `debug(msg: string)`
-
-Log debug-level message (visible when level = 0).
-
-```lua
-logger.debug('Variable value: ' .. tostring(value))
-```
-
-#### `info(msg: string)`
+### info(msg)
 
 Log info-level message (visible when level ≤ 1).
 
@@ -237,7 +205,7 @@ Log info-level message (visible when level ≤ 1).
 logger.info('Plugin initialized successfully')
 ```
 
-#### `warn(msg: string, ...)`
+### warn(msg)
 
 Log warning-level message (visible when level ≤ 2).
 
@@ -245,25 +213,43 @@ Log warning-level message (visible when level ≤ 2).
 logger.warn('Deprecated function called')
 ```
 
-#### `error(msg: string)`
+### error(msg)
 
-Log error-level message (always visible).
+Log error-level message. Always logged regardless of level.
 
 ```lua
 logger.error('Failed to load configuration')
 ```
 
-### Utility Functions
+### debug(msg)
 
-#### `viewRuntimeLog()`
+Log debug-level message (visible when level = 0).
 
-Display the runtime log in a new tab. All accumulated log messages are shown. Press `q` to close the buffer.
+```lua
+logger.debug('Variable value: ' .. tostring(value))
+```
+
+### derive(name)
+
+Create a named logger instance for your plugin.
+
+Returns a table with `info`, `warn`, `error`, `debug`, and `set_level` methods.
+
+```lua
+local myLogger = require('logger').derive('treesitter')
+myLogger.set_level(0)  -- debug level for this logger only
+myLogger.debug('Parsing AST')
+```
+
+### viewRuntimeLog()
+
+Display the runtime log in a new tab. Press `q` to close the buffer.
 
 ```lua
 require('logger').viewRuntimeLog()
 ```
 
-#### `clearRuntimeLog()`
+### clearRuntimeLog()
 
 Clear all entries from the in-memory runtime log.
 
@@ -271,108 +257,18 @@ Clear all entries from the in-memory runtime log.
 require('logger').clearRuntimeLog()
 ```
 
-## Logging Levels
+## 📊 Logging Levels
 
-| Level | Value | Logs              |
-|-------|-------|-------------------|
-| Debug | 0     | debug, info, warn, error |
-| Info  | 1     | info, warn, error |
-| Warn  | 2     | warn, error       |
-| Error | 3     | error             |
+| Level | Value | Logs |
+| ----- | ----- | ---- |
+| Debug | 0 | debug, info, warn, error |
+| Info | 1 | info, warn, error |
+| Warn | 2 | warn, error |
+| Error | 3 | error |
 
-**Note:** `error` messages are always logged regardless of the level setting.
+`error` messages are always logged regardless of the level setting.
 
-## Advanced Examples
-
-### Complete Plugin Integration
-
-```lua
-local logger = require('logger').derive('myplugin')
-
-local M = {}
-
-function M.setup()
-  logger.info('Plugin setup started')
-  
-  local success, err = pcall(function()
-    -- Initialize components
-  end)
-  
-  if not success then
-    logger.error('Setup failed: ' .. err)
-    return false
-  end
-  
-  logger.debug('Configuration loaded')
-  logger.info('Plugin setup completed successfully')
-  return true
-end
-
-function M.processData(data)
-  logger.debug('Processing data: ' .. #data .. ' bytes')
-  
-  if #data == 0 then
-    logger.warn('Empty data received')
-    return nil
-  end
-  
-  -- Processing logic
-  logger.info('Data processed successfully')
-end
-
-return M
-```
-
-### Debugging Workflow with Dynamic Level Control
-
-```lua
-local logger = require('logger').derive('debugger')
-
--- Set to debug level for detailed logging
-logger.set_level(0)
-
-function debugFunction()
-  logger.debug('Entering debugFunction')
-  
-  local x = 42
-  logger.debug('x = ' .. x)
-  
-  if x > 10 then
-    logger.info('x is greater than 10')
-  else
-    logger.warn('x is less than or equal to 10')
-  end
-  
-  logger.debug('Exiting debugFunction')
-end
-
--- After debugging, reduce verbosity
-logger.set_level(2)
-```
-
-### Multi-plugin Logging System
-
-```lua
-local mainLogger = require('logger').derive('main')
-local dbLogger = require('logger').derive('database')
-local uiLogger = require('logger').derive('ui')
-
-function initializePlugin()
-  mainLogger.info('Initializing plugin system')
-  
-  -- Database initialization
-  dbLogger.debug('Connecting to database')
-  dbLogger.info('Database connection established')
-  
-  -- UI initialization
-  uiLogger.debug('Setting up UI components')
-  uiLogger.info('UI initialized successfully')
-  
-  mainLogger.info('Plugin system ready')
-end
-```
-
-## Self-Promotion
+## 📣 Self-Promotion
 
 Like this plugin? Star the repository on
 GitHub.
@@ -380,7 +276,7 @@ GitHub.
 Love this plugin? Follow [me](https://wsdjeg.net/) on
 [GitHub](https://github.com/wsdjeg).
 
-## License
+## 📄 License
 
 This project is licensed under the GPL-3.0 License.
 
